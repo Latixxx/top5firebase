@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Admin page</title>
+
+  <script defer src="/__/firebase/9.21.0/firebase-app-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-auth-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-database-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-functions-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-messaging-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-storage-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-analytics-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-remote-config-compat.js"></script>
+  <script defer src="/__/firebase/9.21.0/firebase-performance-compat.js"></script>
+  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+  <a class="inicio-btn" href="index.html">INICIO</a>
+  <button id="logout-btn">Logout</button>
+
+
+
+  <form id="login-form">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Ingresar email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" placeholder="Ingresar contraseña" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Sign in</button>
+  </form>
+
+
+
+  <form id="form-1">
+    <label for="ranking">Ranking:</label>
+    <input type="number" id="ranking" name="ranking" required>
+
+    <label for="title">Titulo:</label>
+    <input type="text" id="title" name="title" required>
+
+    <label for="artist">Artista:</label>
+    <input type="text" id="artist" name="artist" required>
+
+    <input type="submit" value="Submit">
+
+  </form>
+
+
+
+  <script type="module" src="app.js"></script>
+
+
+  <script type="module">
+    const auth = firebase.auth();
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = form.email.value;
+      const password = form.password.value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          // Signed in successfully, show success message and form-1
+          const user = userCredential.user;
+
+          document.getElementById("form-1").style.display = "flex";
+          document.getElementById("login-form").style.display = "none";
+          document.getElementById("logout-btn").style.display = "inline-block";
+        })
+        .catch((error) => {
+          // Error occurred, show error message
+          const message = document.createElement("p");
+          message.textContent = `Authentication failed: ${error.message}`;
+          document.body.appendChild(message);
+        });
+    });
+
+    // Logout function
+    function logout() {
+      auth.signOut().then(() => {
+        // User signed out successfully
+        // Show the login form and hide the content
+        document.getElementById("form-1").style.display = "none";
+        document.getElementById("login-form").style.display = "flex";
+        document.getElementById("logout-btn").style.display = "none";
+      }).catch((error) => {
+        // An error occurred
+        console.log(error.message);
+      });
+    }
+
+    // Attach logout function to button click event
+    document.getElementById("logout-btn").addEventListener("click", logout);
+
+  </script>
+
+</body>
+
+</html>
